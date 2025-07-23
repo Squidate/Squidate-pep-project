@@ -31,6 +31,7 @@ public class SocialMediaController {
         app.get("/messages", this::getAllMessagesHandler);
         app.get("/messages/{message_id}", this::getMessagesByIdHandler);
         app.get("/messages/{account_id}/messages", this::getMessagesByUserIdHandler);
+        app.get("/accounts/{account_id}/messages", this::getMessagesByUserIdHandler);
         app.patch("/messages/{message_id}", this::updateMessageHandler);
         app.delete("/messages/{message_id}", this::deleteMessageHandler);
 
@@ -47,13 +48,13 @@ public class SocialMediaController {
 
     private void registerHandler(Context ctx){
         Account account = ctx.bodyAsClass(Account.class);
-        if (account.getUsername() == null || account.getPassword() == null || account.getUsername().isEmpty() || account.getPassword().isEmpty()) {
+        if (account.getUsername() == null || account.getPassword() == null || account.getUsername().isEmpty() || account.getPassword().length() < 4) {
         ctx.status(400);
         return;
     }
     Account registered = accountService.register(account);
     if (registered == null){
-        ctx.status(409);
+        ctx.status(400);
     } else{
         ctx.status(200).json(registered);
     }
